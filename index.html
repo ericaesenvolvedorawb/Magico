@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mundo Mágico da Aprendizagem</title>
+    <style>
+        /* Paleta de cores suaves e divertidas */
+        :root {
+            --azul-ceu: #87CEEB;
+            --verde-menta: #98FB98;
+            --lavanda: #E6E6FA;
+            --coral: #FFB6C1;
+            --amarelo-pessego: #FFDAB9;
+            --roxo-claro: #D8BFD8;
+            --sombra: rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--azul-ceu), var(--lavanda));
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--sombra);
+            overflow: hidden;
+        }
+        
+        .tela {
+            display: none;
+            padding: 20px;
+            flex-direction: column;
+            align-items: center;
+            min-height: 500px;
+        }
+        
+        .tela.ativa {
+            display: flex;
+        }
+        
+        .cabecalho {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        .titulo {
+            color: var(--azul-ceu);
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 0 var(--sombra);
+        }
+        
+        .subtitulo {
+            color: var(--roxo-claro);
+            font-size: 1.2rem;
+        }
+        
+        .avatar-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .avatar {
+            font-size: 3rem;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            transition: all 0.3s;
+            background-color: var(--lavanda);
+        }
+        
+        .avatar.selecionado {
+            background-color: var(--azul-ceu);
+            transform: scale(1.1);
+            box-shadow: 0 0 10px var(--azul-ceu);
+        }
+        
+        .campo-entrada {
+            width: 100%;
+            max-width: 300px;
+            margin: 10px 0;
+            padding: 12px;
+            border: 2px solid var(--lavanda);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .campo-entrada:focus {
+            border-color: var(--azul-ceu);
+            outline: none;
+        }
+        
+        .botoes-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        
+        .btn-principal {
+            background-color: var(--azul-ceu);
+            color: white;
+        }
+        
+        .btn-secundario {
+            background-color: var(--lavanda);
+            color: #555;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px var(--sombra);
+        }
+        
+        .configuracao-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin: 10px 0;
+            background-color: var(--lavanda);
+            border-radius: 10px;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--azul-ceu);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        .mundo-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .mundo {
+            width: 150px;
+            height: 150px;
+            background-color: var(--lavanda);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .mundo:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px var(--sombra);
+        }
+        
+        .mundo-matematica {
+            background-color: var(--coral);
+        }
+        
+        .mundo-portugues {
+            background-color: var(--amarelo-pessego);
+        }
+        
+        .mundo-icone {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .atividade {
+            width: 100%;
+            background-color: var(--lavanda);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .atividade:hover {
+            transform: translateX(5px);
+            background-color: var(--azul-ceu);
+            color: white;
+        }
+        
+        .progresso-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin: 20px 0;
+            height: 20px;
+        }
+        
+        .progresso-bar {
+            height: 100%;
+            background-color: var(--azul-ceu);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .conquista {
+            display: flex;
+            align-items: center;
+            background-color: var(--lavanda);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            width: 100%;
+        }
+        
+        .conquista-icone {
+            font-size: 2rem;
+            margin-right: 15px;
+        }
+        
+        .conquista-info {
+            flex-grow: 1;
+        }
+        
+        .perfil-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            background-color: var(--lavanda);
+            padding: 15px;
+            border-radius: 15px;
+            width: 100%;
+        }
+        
+        .perfil-avatar {
+            font-size: 4rem;
+            margin-right: 20px;
+        }
+        
+        .perfil-detalhes h3 {
+            color: var(--azul-ceu);
+            margin-bottom: 5px;
+        }
+        
+        .jogo-container {
+            width: 100%;
+            background-color: var(--lavanda);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px 0;
+        }
+        
+        .jogo-pergunta {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .jogo-opcoes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .jogo-opcao {
+            padding: 15px;
+            background-color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.5rem;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .jogo-opcao:hover {
+            background-color: var(--azul-ceu);
+            color: white;
+        }
+        
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .feedback.correto {
+            background-color: var(--verde-menta);
+            display: block;
+        }
+        
+        .feedback.incorreto {
+            background-color: #FFB6C1;
+            display: block;
+        }
+        
+        .navegacao {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Tela de Boas-Vindas -->
+        <div id="tela-boas-vindas" class="tela ativa">
+            <div class="cabecalho">
+                <h1 class="titulo">Mundo Mágico da Aprendizagem</h1>
+                <p class="subtitulo">Uma aventura encantada de aprendizado!</p>
+            </div>
+            
+            <div class="perfil-info">
+                <div class="perfil-avatar">🦉</div>
+                <div class="perfil-detalhes">
+                    <h3>Bem-vindo, Explorador!</h3>
+                    <p>Vamos criar seu perfil mágico</p>
+                </div>
+            </div>
+            
+            <div class="botoes-container">
+                <button class="btn btn-principal" onclick="mostrarTela('tela-perfil')">Criar Perfil</button>
+                <button class="btn btn-secundario" onclick="mostrarTela('tela-configuracoes')">Configurações</button>
+            </div>
+        </div>
+        
+        <!-- Tela de Perfil -->
+        <div id="tela-perfil" class="tela">
+            <div class="cabecalho">
+                <h2 class="titulo">Crie Seu Perfil Mágico</h2>
+                <p class="subtitulo">Escolha seu avatar e nos conte sobre você</p>
+            </div>
+            
+            <h3>Escolha seu animal mágico:</h3>
+            <div class="avatar-container">
+                <div class="avatar" onclick="selecionarAvatar(this)">🦉</div>
+                <div class="avatar" onclick="selecionarAvatar(this)">🐱</div>
+                <div class="avatar" onclick="selecionarAvatar(this)">🦁</div>
+                <div class="avatar" onclick="selecionarAvatar(this)">🐰</div>
+                <div class="avatar" onclick="selecionarAvatar(this)">🐢</div>
+                <div class="avatar" onclick="selecionarAvatar(this)">🐘</div>
+            </div>
+            
+            <input type="text" class="campo-entrada" id="nome-crianca" placeholder="Digite seu nome">
+            
+            <h3>Quantos anos você tem?</h3>
+            <div class="botoes-container">
+                <button class="btn btn-secundario" onclick="selecionarIdade(6)">6 anos</button>
+                <button class="btn btn-secundario" onclick="selecionarIdade(7)">7 anos</button>
+                <button class="btn btn-secundario" onclick="selecionarIdade(8)">8 anos</button>
+            </div>
+            
+            <div class="botoes-container">
+                <button class="btn btn-principal" onclick="salvarPerfil()">Salvar Perfil</button>
+                <button class="btn btn-secundario" onclick="mostrarTela('tela-boas-vindas')">Voltar</button>
+            </div>
+        </div>
+        
+        <!-- Tela de Configurações -->
+        <div id="tela-configuracoes" class="tela">
+            <div class="cabecalho">
+                <h2 class="titulo">Configurações Mágicas</h2>
+                <p class="subtitulo">Personalize sua experiência de aprendizado</p>
+            </div>
+            
+            <div class="configuracao-item">
+                <span>Fonte OpenDyslexic</span>
+                <label class="switch">
+                    <input type="checkbox" id="fonte-dyslexic">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="configuracao-item">
+                <span>Letras Maiúsculas</span>
+                <label class="switch">
+                    <input type="checkbox" id="letras-maiusculas">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="configuracao-item">
+                <span>Leitura de Áudio</span>
+                <label class="switch">
+                    <input type="checkbox" id="leitura-audio" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="configuracao-item">
+                <span>Efeitos Sonoros</span>
+                <label class="switch">
+                    <input type="checkbox" id="efeitos-sonoros" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="configuracao-item">
+                <span>Música de Fundo</span>
+                <label class="switch">
+                    <input type="checkbox" id="musica-fundo" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="botoes-container">
+                <button class="btn btn-principal" onclick="aplicarConfiguracoes()">Aplicar</button>
+                <button class="btn btn-secundario" onclick="mostrarTela('tela-boas-vindas')">Voltar</button>
+            </div>
+        </div>
+        
+        <!-- Tela Principal -->
+        <div id="tela-principal" class="tela">
+            <div class="cabecalho">
+                <h2 class="titulo" id="titulo-com-nome">Olá, Explorador!</h2>
+                <p class="subtitulo">Para qual mundo mágico vamos hoje?</p>
+            </div>
+            
+            <div class="perfil-info">
+                <div class="perfil-avatar" id="avatar-perfil">🦉</div>
+                <div class="perfil-detalhes">
+                    <h3 id="nome-perfil">Explorador</h3>
+                    <p id="idade-perfil">Idade: </p>
+                </div>
+            </div>
+            
+            <div class="mundo-container">
+                <div class="mundo mundo-matematica" onclick="iniciarMundo('matematica')">
+                    <div class="mundo-icone">🔢</div>
+                    <h3>Terra dos Números</h3>
+                    <p>Matemática Divertida</p>
+                </div>
+                
+                <div class="mundo mundo-portugues" onclick="iniciarMundo('portugues')">
+                    <div class="mundo-icone">📚</div>
+                    <h3>Floresta das Letras</h3>
+                    <p>Português Encantado</p>
+                </div>
+            </div>
+            
+            <div class="botoes-container">
+                <button class="btn btn-secundario" onclick="mostrarTela('tela-conquistas')">Minhas Conquistas</button>
+                <button class="btn btn-secundario" onclick="mostrarTela('tela-configuracoes')">Configurações</button>
+            </div>
+        </div>
+        
+        <!-- Tela de Conquistas -->
+        <div id="tela-conquistas" class="tela">
+            <div class="cabecalho">
+                <h2 class="titulo">Minhas Conquistas</h2>
+                <p class="subtitulo">Veja suas medalhas mágicas</p>
+            </div>
+            
+            <div class="conquista">
+                <div class="conquista-icone">🥇</div>
+                <div class="conquista-info">
+                    <h4>Mestre das Sílabas</h4>
+                    <p>Forme 50 palavras corretamente</p>
+                    <div class="progresso-container">
+                        <div class="progresso-bar" style="width: 30%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="conquista">
+                <div class="conquista-icone">🥈</div>
+                <div class="conquista-info">
+                    <h4>Gênio da Adição</h4>
+                    <p>Resolva 100 problemas de soma</p>
+                    <div class="progresso-container">
+                        <div class="progresso-bar" style="width: 60%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="conquista">
+                <div class="conquista-icone">🥉</div>
+                <div class="conquista-info">
+                    <h4>Detetive de Rimas</h4>
+                    <p>Encontre 30 pares de palavras que rimam</p>
+                    <div class="progresso-container">
+                        <div class="progresso-bar" style="width: 10%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="botoes-container">
+                <button class="btn btn-principal" onclick="mostrarTela('tela-principal')">Voltar</button>
+            </div>
+        </div>
+        
+        <!-- Tela de Jogo - Matemática -->
+        <div id="tela-jogo-matematica" class="tela">
+            <div class="cabecalho">
+                <h2 class="titulo">Terra dos Números</h2>
+                <p class="subtitulo">Resolva o problema mágico!</p>
+            </div>
+            
+            <div class="jogo-container">
+                <div class="jogo-pergunta" id="pergunta-matematica">
+                    O pirata tem 3 moedas e encontra mais 2. Quantas moedas ele tem agora?
+                </div>
+                
+                <div class="jogo-opcoes">
+                    <div class="jogo-opcao" onclick="verificarResposta(5, this)">5</div>
+                    <div class="jogo-opcao" onclick="verificarResposta(4, this)">4</div>
+                    <div class="jogo-opcao" onclick="verificarResposta(6, this)">6</div>
+                    <div class="jogo-opcao" onclick="verificarResposta(3, this)">3</div>
+                </div>
+                
+                <div class="feedback" id="feedback-matematica"></div>
+            </div>
+            
+            <div class="navegacao">
+                <button class="btn btn-secundario" onclick="mostrarTela('tela-principal')">Voltar</button>
+                <button class="btn btn-principal" onclick="proximaPergunta('matematica')">Próxima</button>
+            </div>
+        </div>
+        
+        <!-- Tela de Jogo - Português -->
+        <div id="tela-jogo-portugues" class="tela">
+            <div class="cabecalho">
+                <h2 class="titulo">Floresta das Letras</h2>
+                <p class="subtitulo">Encontre a palavra que rima!</p>
+            </div>
+            
+            <div class="jogo-container">
+                <div class="jogo-pergunta" id="pergunta-portugues">
+                    Qual palavra rima com GATO?
+                </div>
+                
+                <div class="jogo-opcoes">
+                    <div class="jogo-opcao" onclick="verificarRespostaPortugues('casa', this)">CASA</div>
+                    <div class="jogo-opcao" onclick="verificarRespostaPortugues('pato', this)">PATO</div>
+                    <div class="jogo-opcao" onclick="verificarRespostaPortugues('flor', this)">FLOR</div>
+                    <div class="jogo-opcao" onclick="verificarRespostaPortugues('mesa', this)">MESA</div>
+                </div>
+                
+                <div class="feedback" id="feedback-portugues"></div>
+            </div>
+            
+            <div class="navegacao">
+                <button class="btn btn-secundario" onclick="mostrarTela('tela-principal')">Voltar</button>
+                <button class="btn btn-principal" onclick="proximaPergunta('portugues')">Próxima</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variáveis globais
+        let perfilUsuario = {
+            nome: '',
+            idade: 0,
+            avatar: '🦉'
+        };
+        
+        let configuracoes = {
+            fonteDyslexic: false,
+            letrasMaiusculas: false,
+            leituraAudio: true,
+            efeitosSonoros: true,
+            musicaFundo: true
+        };
+        
+        // Funções de navegação
+        function mostrarTela(idTela) {
+            // Oculta todas as telas
+            const telas = document.querySelectorAll('.tela');
+            telas.forEach(tela => {
+                tela.classList.remove('ativa');
+            });
+            
+            // Mostra a tela solicitada
+            document.getElementById(idTela).classList.add('ativa');
+        }
+        
+        // Funções de perfil
+        function selecionarAvatar(elemento) {
+            // Remove a seleção de todos os avatares
+            const avatares = document.querySelectorAll('.avatar');
+            avatares.forEach(avatar => {
+                avatar.classList.remove('selecionado');
+            });
+            
+            // Seleciona o avatar clicado
+            elemento.classList.add('selecionado');
+            perfilUsuario.avatar = elemento.textContent;
+        }
+        
+        function selecionarIdade(idade) {
+            perfilUsuario.idade = idade;
+            
+            // Feedback visual para idade selecionada
+            const botoesIdade = document.querySelectorAll('.btn-secundario');
+            botoesIdade.forEach(botao => {
+                if (parseInt(botao.textContent) === idade) {
+                    botao.style.backgroundColor = 'var(--azul-ceu)';
+                    botao.style.color = 'white';
+                } else {
+                    botao.style.backgroundColor = 'var(--lavanda)';
+                    botao.style.color = '#555';
+                }
+            });
+        }
+        
+        function salvarPerfil() {
+            const nomeInput = document.getElementById('nome-crianca');
+            perfilUsuario.nome = nomeInput.value || 'Explorador';
+            
+            if (perfilUsuario.idade === 0) {
+                alert('Por favor, selecione sua idade!');
+                return;
+            }
+            
+            // Atualiza a tela principal com os dados do perfil
+            document.getElementById('titulo-com-nome').textContent = `Olá, ${perfilUsuario.nome}!`;
+            document.getElementById('nome-perfil').textContent = perfilUsuario.nome;
+            document.getElementById('idade-perfil').textContent = `Idade: ${perfilUsuario.idade} anos`;
+            document.getElementById('avatar-perfil').textContent = perfilUsuario.avatar;
+            
+            mostrarTela('tela-principal');
+        }
+        
+        // Funções de configurações
+        function aplicarConfiguracoes() {
+            configuracoes.fonteDyslexic = document.getElementById('fonte-dyslexic').checked;
+            configuracoes.letrasMaiusculas = document.getElementById('letras-maiusculas').checked;
+            configuracoes.leituraAudio = document.getElementById('leitura-audio').checked;
+            configuracoes.efeitosSonoros = document.getElementById('efeitos-sonoros').checked;
+            configuracoes.musicaFundo = document.getElementById('musica-fundo').checked;
+            
+            // Aplica as configurações de acessibilidade
+            if (configuracoes.fonteDyslexic) {
+                document.body.style.fontFamily = 'Comic Sans MS, cursive, sans-serif';
+            } else {
+                document.body.style.fontFamily = "'Comic Sans MS', cursive, sans-serif";
+            }
+            
+            if (configuracoes.letrasMaiusculas) {
+                document.body.style.textTransform = 'uppercase';
+            } else {
+                document.body.style.textTransform = 'none';
+            }
+            
+            alert('Configurações aplicadas com sucesso!');
+            mostrarTela('tela-principal');
+        }
+        
+        // Funções de jogo
+        function iniciarMundo(mundo) {
+            if (mundo === 'matematica') {
+                mostrarTela('tela-jogo-matematica');
+            } else if (mundo === 'portugues') {
+                mostrarTela('tela-jogo-portugues');
+            }
+        }
+        
+        function verificarResposta(respostaCorreta, elemento) {
+            const feedback = document.getElementById('feedback-matematica');
+            const opcoes = document.querySelectorAll('#tela-jogo-matematica .jogo-opcao');
+            
+            // Remove seleção de todas as opções
+            opcoes.forEach(opcao => {
+                opcao.style.backgroundColor = 'white';
+                opcao.style.color = 'black';
+            });
+            
+            // Verifica a resposta
+            if (parseInt(elemento.textContent) === respostaCorreta) {
+                elemento.style.backgroundColor = 'var(--verde-menta)';
+                feedback.textContent = 'Parabéns! Resposta correta! 🎉';
+                feedback.className = 'feedback correto';
+            } else {
+                elemento.style.backgroundColor = '#FFB6C1';
+                feedback.textContent = 'Tente novamente! Você consegue! 💪';
+                feedback.className = 'feedback incorreto';
+                
+                // Mostra a resposta correta
+                opcoes.forEach(opcao => {
+                    if (parseInt(opcao.textContent) === respostaCorreta) {
+                        opcao.style.backgroundColor = 'var(--verde-menta)';
+                    }
+                });
+            }
+        }
+        
+        function verificarRespostaPortugues(respostaCorreta, elemento) {
+            const feedback = document.getElementById('feedback-portugues');
+            const opcoes = document.querySelectorAll('#tela-jogo-portugues .jogo-opcao');
+            
+            // Remove seleção de todas as opções
+            opcoes.forEach(opcao => {
+                opcao.style.backgroundColor = 'white';
+                opcao.style.color = 'black';
+            });
+            
+            // Verifica a resposta
+            if (elemento.textContent.toLowerCase() === respostaCorreta) {
+                elemento.style.backgroundColor = 'var(--verde-menta)';
+                feedback.textContent = 'Excelente! Você encontrou a rima! 🎉';
+                feedback.className = 'feedback correto';
+            } else {
+                elemento.style.backgroundColor = '#FFB6C1';
+                feedback.textContent = 'Essa não é a rima correta. Tente outra! 💪';
+                feedback.className = 'feedback incorreto';
+                
+                // Mostra a resposta correta
+                opcoes.forEach(opcao => {
+                    if (opcao.textContent.toLowerCase() === respostaCorreta) {
+                        opcao.style.backgroundColor = 'var(--verde-menta)';
+                    }
+                });
+            }
+        }
+        
+        function proximaPergunta(mundo) {
+            // Limpa o feedback
+            if (mundo === 'matematica') {
+                document.getElementById('feedback-matematica').className = 'feedback';
+                
+                // Altera a pergunta (simulação)
+                const perguntas = [
+                    "A abelha visitou 4 flores de manhã e 3 à tarde. Quantas flores visitou no total?",
+                    "O coelho tinha 8 cenouras e comeu 3. Quantas cenouras sobraram?",
+                    "Na árvore havia 6 maçãs. Colhemos 2. Quantas maçãs ficaram?"
+                ];
+                
+                const randomPergunta = perguntas[Math.floor(Math.random() * perguntas.length)];
+                document.getElementById('pergunta-matematica').textContent = randomPergunta;
+                
+                // Limpa as opções
+                const opcoes = document.querySelectorAll('#tela-jogo-matematica .jogo-opcao');
+                opcoes.forEach(opcao => {
+                    opcao.style.backgroundColor = 'white';
+                    opcao.style.color = 'black';
+                });
+            } else if (mundo === 'portugues') {
+                document.getElementById('feedback-portugues').className = 'feedback';
+                
+                // Altera a pergunta (simulação)
+                const perguntas = [
+                    "Qual palavra rima com CASA?",
+                    "Qual palavra rima com FLOR?",
+                    "Qual palavra rima com SOL?"
+                ];
+                
+                const randomPergunta = perguntas[Math.floor(Math.random() * perguntas.length)];
+                document.getElementById('pergunta-portugues').textContent = randomPergunta;
+                
+                // Limpa as opções
+                const opcoes = document.querySelectorAll('#tela-jogo-portugues .jogo-opcao');
+                opcoes.forEach(opcao => {
+                    opcao.style.backgroundColor = 'white';
+                    opcao.style.color = 'black';
+                });
+            }
+        }
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            // Seleciona o primeiro avatar por padrão
+            document.querySelector('.avatar').classList.add('selecionado');
+        });
+    </script>
+</body>
+</html>
